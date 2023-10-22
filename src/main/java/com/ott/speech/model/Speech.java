@@ -19,7 +19,6 @@ public class Speech implements Serializable {
     private Date date;
 
     public Speech(Long id, String author, String speech, String keywords, Date date) {
-        this.id = id;
         this.author = author;
         this.speech = speech;
         this.keywords = keywords;
