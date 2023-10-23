@@ -41,6 +41,7 @@ public class SpeechService {
     }
 
     public List<Speech> searchSpeech(Speech speech) {
-        return Collections.singletonList(speech);
+        List<Speech> foundSpeeches = speechRepo.findAllByAuthorLike("%" + speech.getAuthor() + "%");
+        return foundSpeeches;
     }
 }
