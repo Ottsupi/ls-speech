@@ -50,6 +50,15 @@ public class SpeechService {
         String startDateString = json.has("startDate") ? json.get("startDate").asText() : "";
         String endDateString = json.has("endDate") ? json.get("endDate").asText() : "";
 
+        if (author.isBlank() &&
+                speechText.isBlank() &&
+                keywords.isBlank() &&
+                startDateString.isBlank() &&
+                endDateString.isBlank()
+        ) {
+            return speechRepo.findAll();
+        }
+
         Specification<Speech> spec = Specification.where(null);
         if (!author.isBlank()) {
             spec = spec.or(SpeechSearchSpecifications.hasAuthor(author));
@@ -64,8 +73,8 @@ public class SpeechService {
             }
         }
         if (!startDateString.isBlank() && !endDateString.isBlank()) {
-            Date startDate = new SimpleDateFormat("yyyy-mm-dd", Locale.US).parse(startDateString);
-            Date endDate = new SimpleDateFormat("yyyy-mm-dd", Locale.US).parse(endDateString);
+            Date startDate = new SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(startDateString);
+            Date endDate = new SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(endDateString);
             spec = spec.or(SpeechSearchSpecifications.isBetweenDates(startDate, endDate));
         }
 
