@@ -23,10 +23,16 @@ public class SpeechController {
         return new ResponseEntity<>(speechList, HttpStatus.OK);
     }
 
-    @GetMapping("find/{id}")
+    @GetMapping("/find/{id}")
     public ResponseEntity<Speech> getSpeechById (@PathVariable("id") Long id) {
         Speech speech = speechService.findSpeechById(id);
         return new ResponseEntity<>(speech, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Speech>> searchSpeech (@RequestBody Speech speech) {
+        List<Speech> foundSpeech = speechService.searchSpeech(speech);
+        return new ResponseEntity<>(foundSpeech, HttpStatus.OK);
     }
 
     @PostMapping("/add")

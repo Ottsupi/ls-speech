@@ -6,6 +6,8 @@ import com.ott.speech.repository.SpeechRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -38,4 +40,7 @@ public class SpeechService {
         speechRepo.deleteSpeechById(id);
     }
 
+    public List<Speech> searchSpeech(Speech speech) {
+        return Collections.singletonList(speech);
+    }
 }
