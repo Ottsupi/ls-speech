@@ -1,14 +1,17 @@
 package com.ott.speech.service;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.ott.speech.exception.SpeechNotFoundException;
 import com.ott.speech.model.Speech;
 import com.ott.speech.repository.SpeechRepository;
+import com.ott.speech.utility.SpeechSearchSpecifications;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class SpeechService {
@@ -40,8 +43,33 @@ public class SpeechService {
         speechRepo.deleteSpeechById(id);
     }
 
-    public List<Speech> searchSpeech(Speech speech) {
-        List<Speech> foundSpeeches = speechRepo.findAllByAuthorLike("%" + speech.getAuthor() + "%");
+    public List<Speech> searchSpeechLike(ObjectNode json) throws ParseException {
+        String author = json.has("author") ? json.get("author").asText() : "";
+        String speechText = json.has("speech") ? json.get("speech").asText() : "";
+        String keywords = json.has("keywords") ?  json.get("keywords").asText() : "";
+        String startDateString = json.has("startDate") ? json.get("startDate").asText() : "";
+        String endDateString = json.has("endDate") ? json.get("endDate").asText() : "";
+
+        Specification<Speech> spec = Specification.where(null);
+        if (!author.isBlank()) {
+            spec = spec.or(SpeechSearchSpecifications.hasAuthor(author));
+        }
+        if (!speechText.isBlank()) {
+            spec = spec.or(SpeechSearchSpecifications.hasTextInSpeech(speechText));
+        }
+        if (!keywords.isBlank()) {
+            String[] keywordsArray = keywords.split(" ", 0);
+            for (String keyword : keywordsArray) {
+                spec = spec.or(SpeechSearchSpecifications.hasKeyword(keyword));
+            }
+        }
+        if (!startDateString.isBlank() && !endDateString.isBlank()) {
+            Date startDate = new SimpleDateFormat("yyyy-mm-dd", Locale.US).parse(startDateString);
+            Date endDate = new SimpleDateFormat("yyyy-mm-dd", Locale.US).parse(endDateString);
+            spec = spec.or(SpeechSearchSpecifications.isBetweenDates(startDate, endDate));
+        }
+
+        List<Speech> foundSpeeches = speechRepo.findAll(spec);
         return foundSpeeches;
     }
 }

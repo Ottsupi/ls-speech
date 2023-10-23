@@ -1,12 +1,17 @@
 package com.ott.speech;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.ott.speech.model.Speech;
 import com.ott.speech.service.SpeechService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/speech")
@@ -30,9 +35,13 @@ public class SpeechController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Speech>> searchSpeech (@RequestBody Speech speech) {
-        List<Speech> foundSpeech = speechService.searchSpeech(speech);
-        return new ResponseEntity<>(foundSpeech, HttpStatus.OK);
+    public ResponseEntity<List<Speech>> searchSpeech (@RequestBody ObjectNode json) {
+        try {
+            List<Speech> foundSpeech = speechService.searchSpeechLike(json);
+            return new ResponseEntity<>(foundSpeech, HttpStatus.OK);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @PostMapping("/add")
