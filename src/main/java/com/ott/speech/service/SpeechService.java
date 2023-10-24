@@ -7,10 +7,7 @@ import com.ott.speech.repository.SpeechRepository;
 import com.ott.speech.utility.SpeechSearchSpecifications;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

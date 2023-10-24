@@ -1,13 +1,7 @@
 package com.ott.speech.repository;
 
 import com.ott.speech.model.Speech;
-import com.ott.speech.model.Speech_;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -21,6 +15,4 @@ public interface SpeechRepository extends
     void deleteSpeechById(Long id);
 
     Optional<Speech> findSpeechById(Long id);
-
-    List<Speech> findAllByAuthorLike(String author);
 }
