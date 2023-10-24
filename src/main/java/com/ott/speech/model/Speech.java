@@ -1,6 +1,8 @@
 package com.ott.speech.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -12,13 +14,25 @@ public class Speech implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
     private Long id;
+
+    @NotNull
     private String author;
     @Column(columnDefinition="TEXT")
+    @NotNull
     private String speech;
+    @NotNull
     private String keywords;
+    @NotNull
     private Date date;
 
     public Speech(Long id, String author, String speech, String keywords, Date date) {
+        this.id = id;
+        this.author = author;
+        this.speech = speech;
+        this.keywords = keywords;
+        this.date = date;
+    }
+    public Speech(String author, String speech, String keywords, Date date) {
         this.author = author;
         this.speech = speech;
         this.keywords = keywords;
