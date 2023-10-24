@@ -1,17 +1,19 @@
 package com.ott.speech;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.ott.speech.exception.SpeechNotFoundException;
 import com.ott.speech.model.Speech;
 import com.ott.speech.service.SpeechService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @RestController
 @RequestMapping("/speech")
@@ -45,13 +47,13 @@ public class SpeechController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Speech> addSpeech (@RequestBody Speech speech) {
+    public ResponseEntity<Speech> addSpeech (@RequestBody @Validated Speech speech) {
         Speech newSpeech = speechService.addSpeech(speech);
         return new ResponseEntity<>(newSpeech, HttpStatus.CREATED);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Speech> updateSpeech (@RequestBody Speech speech) {
+    public ResponseEntity<Speech> updateSpeech (@RequestBody @Validated Speech speech) {
         Speech updatedSpeech = speechService.updateSpeech(speech);
         return new ResponseEntity<>(updatedSpeech, HttpStatus.OK);
     }
@@ -60,5 +62,23 @@ public class SpeechController {
     public ResponseEntity<?> deleteSpeech (@PathVariable("id") Long id) {
         speechService.deleteSpeech(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handle(SpeechNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
     }
 }
